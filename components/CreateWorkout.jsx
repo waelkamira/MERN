@@ -1,13 +1,17 @@
 'use client';
 import React, { useState } from 'react';
+import { useWorkoutsContext } from '../hooks/useWorkoutContext';
 
 export default function CreateWorkout() {
+  const { dispatch } = useWorkoutsContext();
   const [workout, setWorkout] = useState({
     title: '',
     load: '',
     reps: '',
   });
+
   const [error, setError] = useState('');
+
   async function createWorkout(e) {
     e.preventDefault();
     console.log(workout);
@@ -23,6 +27,7 @@ export default function CreateWorkout() {
         console.log(json);
         setError('');
         setWorkout({ title: '', load: '', reps: '' });
+        dispatch({ type: 'CREATE_WORKOUT', payload: json });
       }
     } else {
       setError('All Fields Are Required');
