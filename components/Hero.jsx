@@ -2,7 +2,8 @@
 import React, { useEffect } from 'react';
 import { useWorkoutsContext } from '../hooks/useWorkoutContext';
 import { RxCross2 } from 'react-icons/rx';
-
+//? هذه المكتبة لاضافة فورمات جميل للتاريخ وفيها خيارات كثيرة مفيدة وجميلة
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 export default function Hero() {
   const { workouts, dispatch } = useWorkoutsContext();
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function Hero() {
 
   return (
     <div className="p-8 h-screen">
+      {workouts?.length === 0 && <h1>There Are No Workouts, Create Some</h1>}
       {workouts?.length > 0 &&
         workouts.map((workout) => (
           <div className="border rounded-lg hover:shadow-lg my-4 p-4 bg-white">
@@ -44,7 +46,12 @@ export default function Hero() {
             <h1 className="text-green-500 font-bold">{workout?.title}</h1>
             <h1 className="">Load(kg): {workout?.load}</h1>
             <h1 className="">Reps: {workout?.reps}</h1>
-            <h1 className="">{workout?.createdAt.slice(0, 10)}</h1>
+            <h1 className="">
+              {formatDistanceToNow(new Date(workout.createdAt), {
+                //لاضافة قبل يوم او قبل 4 ايام للتاريخ addSuffix
+                addSuffix: true,
+              })}
+            </h1>
           </div>
         ))}
     </div>

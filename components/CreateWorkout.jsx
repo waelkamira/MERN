@@ -4,30 +4,37 @@ import { useWorkoutsContext } from '../hooks/useWorkoutContext';
 
 export default function CreateWorkout() {
   const { dispatch } = useWorkoutsContext();
+  const [error, setError] = useState('');
+  const [emptyFields, setEmptyFields] = useState([]);
+  const [empty, setEmpty] = useState(false);
   const [workout, setWorkout] = useState({
     title: '',
     load: '',
     reps: '',
   });
 
-  const [error, setError] = useState('');
-
   async function createWorkout(e) {
     e.preventDefault();
-    console.log(workout);
+    setEmpty(true);
+    // console.log(workout);
 
-    if (workout.title !== '' && workout.reps !== '' && workout.load !== '') {
+    if (workout.title !== '' && workout.load !== '' && workout.reps !== '') {
       const response = await fetch('http://localhost:4000/api/workouts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workout),
       });
+
       const json = await response.json();
       if (response.ok) {
-        console.log(json);
+        // console.log(json);
         setError('');
         setWorkout({ title: '', load: '', reps: '' });
         dispatch({ type: 'CREATE_WORKOUT', payload: json });
+        setEmpty(false);
+      } else {
+        console.log('emptyFields', json.emptyFields);
+        setEmptyFields(json.emptyFields);
       }
     } else {
       setError('All Fields Are Required');
@@ -44,21 +51,39 @@ export default function CreateWorkout() {
       >
         <h1 className="my-4">Exercise Title:</h1>
         <input
-          className="border text-xl p-2"
+          id="Title"
+          name="Title"
+          className={
+            (empty && workout.title === ''
+              ? 'border border-solid border-red-400'
+              : 'border') + ' text-xl p-2'
+          }
           type="text"
           value={workout.title}
           onChange={(e) => setWorkout({ ...workout, title: e.target.value })}
         />
         <h1 className="my-4">Load (in Kg):</h1>
         <input
-          className="border text-xl p-2"
+          id="load"
+          name="load"
+          className={
+            (empty && workout.load === ''
+              ? 'border border-solid border-red-400'
+              : 'border') + ' text-xl p-2'
+          }
           type="number"
           value={workout.load}
           onChange={(e) => setWorkout({ ...workout, load: e.target.value })}
         />
         <h1 className="my-4">Reps:</h1>
         <input
-          className="border text-xl p-2"
+          id="reps"
+          name="reps"
+          className={
+            (empty && workout.reps === ''
+              ? 'border border-solid border-red-400'
+              : 'border') + ' text-xl p-2'
+          }
           type="number"
           value={workout.reps}
           onChange={(e) => setWorkout({ ...workout, reps: e.target.value })}
